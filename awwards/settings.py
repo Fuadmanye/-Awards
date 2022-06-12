@@ -16,13 +16,16 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 import django_heroku
+from dotenv import load_dotenv,find_dotenv
+load_dotenv(find_dotenv())
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 cloudinary.config( 
-  cloud_name = "dnzwhglrm", 
+  cloud_name = "djbgqj522", 
   api_key = os.environ.get('api_key'), 
   api_secret = os.environ.get('api_secret') 
 )
@@ -50,7 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'projects',
     'accounts',
-    'rest_framework'
+    'rest_framework',
     'apis',
 ]
 
