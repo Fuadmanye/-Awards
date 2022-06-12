@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12 background_image">
+        <div class="container-home">
+            <h1 class="text-white">Welcome To AWWWARDS Website</h1>
+            <p style="max-width: 400px;margin:auto;letter-spacing: 1px;">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea ipsam assumenda dicta similique odio adipisci earum sed ad temporibus, quis illo quae laborum veritatis mollitia cupiditate fuga eum vero iste!</p>
+          <form action="{% url 'create-post'%}" method="POST">
+            {% csrf_token %}
+            <button class="btn btn-primary m-5" type="submit">POST A PROJECT FOR A REVIEW</button>
+          </form>
+        </div>
+    </div>
+  </div>
+</div>
+<div class="row mt-5">
+    <div class="col-md-12">
+        <h5 class="text-center">Sample rated projects</h5>
+    <hr>
+    </div>
+</div>
+<div class="container-fluid">
+  <div class="row mb-5">
+    {% for post in posts %}
+    {% if forloop.counter < 5 %}
+    <div class="col-md-3">
+        <div class="card shadow mt-3">
+            <div class="post_image">
+                <img src="{{post.image.url}}" alt=""class="card-img-top">
+            </div>
+            <div class="post_infomation">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between">
+                       <span> <span class="text-success">Author:</span>  <a
+                        href="{% url 'profile' post.author.id %}" style="text-decoration: none; color:black;font-weight:bold">{{post.author}}</a> </span>
+                        <span class="d-inline">
+                            <span>
+                              {% if user.is_authenticated %}
+                                <form action="{% url 'like' %}" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="post" id="post" value="{{post.id}}">
+                                    {% if user not in post.liked.all %}
+                                    <button type="submit" class="button-dismiss">
+                                      <i class="fa fa-heart btn"   style="font-size:20px"></i>
+                                    </button>
+                                    {% else %}
+                                          <button type="submit" class="button-dismiss">
+                                            <i class="fa fa-heart btn"   style="font-size: 20px; color:red"></i>
+                                          </button>
+                                    {% endif %}
+                                </form>
+                                {% endif %}
+                            </span>
+                            <span>{{post.liked.all.count}} likes</span>
+                        </span>
+                    </li>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                      <li class="list-group-item"><span class="text-success">Project Name: </span>{{post.name}}</li>
+                      <li class="list-group-item"><span class="text-success">Project Description: </span>{{post.description|truncatechars:50}}</li>
+                      <li class="list-group-item d-flex justify-content-between">
+
+                          <span class="text-success"><a href="{{post.project_link}}" class="text-success">View Site</a></span>
+                          <span><i class="fa fa-star" aria-hidden="true"></i><i class="fa fa-star" aria-hidden="true"></i><i class="fa fa-star" aria-hidden="true"></i> <i class="fa fa-star" aria-hidden="true"></i> <i class="fa fa-star-half-o" aria-hidden="true"></i></span>
+                        </li>
+                      <li class="list-group-item"><span class="text-success">Average Rate: </span> 5</li>
+
+                    </ul>
+                  </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+</div>
+</div>
+{% endblock %}
