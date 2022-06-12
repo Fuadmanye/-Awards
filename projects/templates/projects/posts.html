@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h4 style="margin-top: 5rem; font-weight:bold;text-align:center;text-transform:uppercase">List of
+                Projects...</h4>
+            <hr>
+        </div>
+    </div>
+</div>
+{% if request.user.is_authenticated %}
+<div class="container-fluid">
+    <div class="row">
+        {% for post in posts %}
+        <div class="col-md-3">
+            <div class="card shadow mt-3 mb-5">
+                <div class="post_image">
+                    <img src="{{post.image.url}}" alt="" class="card-img-top">
+                </div>
+                <div class="post_infomation">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between">
+                            <span> <span class="text-success">Author:</span> <a
+                                    href="{% url 'profile' post.author.id %}"
+                                    style="text-decoration: none; color:black;font-weight:bold">{{post.author}}</a>
+                            </span>
+                            <span class="d-inline">
+                                <span>
+                                    <form action="{% url 'like' %}" method="POST">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="post" id="post" value="{{post.id}}">
+                                        {% if user not in post.liked.all %}
+                                        <button type="submit" class="button-dismiss">
+                                            <i class="fa fa-heart btn" style="font-size:20px"></i>
+                                        </button>
+                                        {% else %}
+                                        <button type="submit" class="button-dismiss">
+                                            <i class="fa fa-heart btn" style="font-size: 20px; color:red"></i>
+                                        </button>
+                                        {% endif %}
+                                    </form>
+                                </span>
+                                <span>{{post.liked.all.count}} likes</span>
+                            </span>
+                            </li>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item"><span class="text-success">Project Name: </span>{{post.name}}
+                            </li>
+                            <li class="list-group-item"><span class="text-success">Project Description:
+                                </span>{{post.description|truncatechars:50}}</li>
+                            <li class="list-group-item d-flex justify-content-between">
+
+                                <span class="text-success"><a href="{{post.project_link}}" class="text-success">View
+                                        Site</a></span>
+                                <span><i class="fa fa-star" aria-hidden="true"></i><i class="fa fa-star"
+                                        aria-hidden="true"></i><i class="fa fa-star" aria-hidden="true"></i> <i
+                                        class="fa fa-star" aria-hidden="true"></i> <i class="fa fa-star-half-o"
+                                        aria-hidden="true"></i></span>
+                            </li>
+                            <li class="list-group-item"><span class="text-success">Average Rate: </span>
+                                {{post.average_review}}</li>
+
+                            <li class="list-group-item">
+                                <p class="d-flex justify-content-between align-items-center">
+                                    <a class="btn btn-primary btn-sm" data-toggle="collapse" href="#comments-{{post.id}}"
+                                        role="button" aria-expanded="false" aria-controls="collapseExample">
+                                        Post a Review
+                                    </a>
+                                    {% if post.reviews.all.count > 0 %}
+                                    <button class="btn btn-secondary btn-sm" type="button" data-toggle="collapse"
+                                        data-target="#collapseExample-{{post.id}}" aria-expanded="false"
+                                        aria-controls="collapseExample">
+                                        View {{post.reviews.all.count}} Reviews
+                                    </button>
+                                    {% else %}
+                                    <span class="text-muted">No Reviews </span> 
+                                    {% endif %}
+                                </p>
+                                <div class="collapse" id="comments-{{post.id}}">
+                                    <div class="card card-body">
+                                        <form action="{% url 'ratings' post.id %}" method="POST">
+                                            {% csrf_token %}
+                                            <div class="form-group">
+                                                <label for="" class="text-danger">How do you rate this project?</label>
+                                                <div class="rate">
+                                                    <input type="radio" name="rating" value="5" id="rating10"
+                                                        required><label for="rating10" title="5"></label>
+                                                    <input type="radio" name="rating" value="4.5" id="rating9"
+                                                        required><label for="rating9" title="4.5" class="half"></label>
+                                                    <input type="radio" name="rating" value="4" id="rating8"
+                                                        required><label for="rating8" title="4"></label>
+                                                    <input type="radio" name="rating" value="3.5" id="rating7"
+                                                        required><label for="rating7" title="3.5" class="half"></label>
+                                                    <input type="radio" name="rating" value="3" id="rating6"
+                                                        required><label for="rating6" title="3"></label>
+                                                    <input type="radio" name="rating" value="2.5" id="rating5"
+                                                        required><label for="rating5" title="2.5" class="half"></label>
+                                                    <input type="radio" name="rating" value="2" id="rating4"
+                                                        required><label for="rating4" title="2"></label>
+                                                    <input type="radio" name="rating" value="1.5" id="rating3"
+                                                        required><label for="rating3" title="1.5" class="half"></label>
+                                                    <input type="radio" name="rating" value="1" id="rating2"
+                                                        required><label for="rating2" title="1"></label>
+                                                    <input type="radio" name="rating" value="0.5" id="rating1"
+                                                        required><label for="rating1" title="0.5" class="half"></label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+
+                                            </div>
+                                            <textarea type="text" name="review" id="comment" class="form-control "
+                                                placeholder="Add a Review..."></textarea>
+                                            {% if request.user.is_authenticated %}
+                                            <button type="submit" class="btn btn-sm btn-primary mt-2">Send
+                                                Review</button>
+                                            {% else %}
+                                            <p>Please <span><a href="{% url 'login'%}"
+                                                        style="text-decoration: none;">login </a></span> to post the
+                                                review</p>
+                                            {% endif %}
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="collapse" id="collapseExample-{{post.id}}">
+                                    <div class="card card-body">
+                                        {% for comment in post.reviews.all %}
+                                        <div class="reviews">
+                                            <span>@<a href="{% url 'profile' comment.user.id %}" style="text-decoration: none;font-weight:bold">{{comment.user.username}}:</a></span>
+                                            <span>{{comment.review}}</span>
+                                        </div>
+                                           
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                        </ul>
+                    </div>
+                </div>
+                </li>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+<p style="text-align: center;">Please <span><a href="{% url 'login'%}" style="text-decoration: none;">Login</a></span> and view other peoples project!</p>
+{% endif %}
+
+{% endblock %}
